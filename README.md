@@ -2,10 +2,13 @@
 
 Real-time harmful content redaction for children browsing the web.
 
+**Live API:** https://haven-api-is35.onrender.com/health  
+*(Render free tier may cold-start ~30s after idle.)*
+
 ## How it works
 
 1. Chrome extension scans page text as the child browses
-2. Text chunks are sent to a local FastAPI backend as one page document
+2. Text chunks are sent to the FastAPI backend as one page document
 3. Backend makes **one** Claude Haiku call per page to classify harmful spans
 4. Extension blurs entire posts/blocks flagged as harmful
 5. Child can click a blurred block to reveal it
@@ -22,37 +25,36 @@ Real-time harmful content redaction for children browsing the web.
 
 ## Setup
 
-### 1. Backend
-
-```bash
-cd model
-python3 -m venv venv
-source venv/bin/activate      # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-
-cp .env.example .env
-# Edit .env and add your ANTHROPIC_API_KEY, then:
-export $(grep -v '^#' .env | xargs)   # or: set -a && source .env && set +a
-
-uvicorn model:app --reload --port 8000
-```
-
-Verify it's running: http://localhost:8000/health
-
-### 2. Chrome Extension
+### 1. Chrome Extension (uses hosted API)
 
 1. Open Chrome → `chrome://extensions/`
 2. Enable **Developer mode** (top right)
 3. Click **Load unpacked**
 4. Select the **`chrome_ext/`** folder (not the repo root)
 
-### 3. Test it
+### 2. Test it
 
-1. Keep the backend running on port 8000
-2. Open `test.html` in Chrome (`file://` or via a local static server)
+1. Reload the extension after pulling latest `chrome_ext/` (API: `https://haven-api-is35.onrender.com`)
+2. Open `test.html` in Chrome (`file://` — enable “Allow access to file URLs” on the extension if needed)
 3. Harmful blocks should blur entirely; click a blurred block to reveal it
 
 Debug: extension **Service worker** console (`chrome://extensions` → Inspect) and the page console.
+
+### 3. Local backend (optional)
+
+```bash
+cd model
+python3 -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+export ANTHROPIC_API_KEY=your-key
+uvicorn model:app --reload --port 8000
+```
+
+Point `chrome_ext/background.js` at `http://localhost:8000` for local dev.
+
+### Deploy API (Render)
+
+Repo includes `render.yaml`. Root directory: **`model`**. Set `ANTHROPIC_API_KEY` in Render environment variables.
 
 ---
 
@@ -75,7 +77,6 @@ Haven/
 
 ## Next steps
 
-- Deploy backend to Railway / Render (remove localhost dependency)
 - Add per-child settings via extension popup
 - Add parent notification when content is redacted
 - Fine-tune confidence thresholds per category

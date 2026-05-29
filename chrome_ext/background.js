@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:8000';
+const API_BASE = 'https://haven-api-is35.onrender.com';
 const MAX_CHUNKS = 30;
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

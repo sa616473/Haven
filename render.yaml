@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: haven-api
+    runtime: python
+    rootDir: model
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn model:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false

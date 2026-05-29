@@ -4,7 +4,11 @@
   "version": "0.1.0",
   "description": "Protects children from harmful content while browsing.",
   "permissions": ["activeTab"],
-  "host_permissions": ["http://localhost:8000/*", "<all_urls>"],
+  "host_permissions": [
+    "https://haven-api-is35.onrender.com/*",
+    "http://localhost:8000/*",
+    "<all_urls>"
+  ],
   "background": {
     "service_worker": "background.js"
   },
