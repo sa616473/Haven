@@ -1,16 +1,18 @@
 {
-    "manifest_version": 3,
-    "name": "Toxicity Highlighter",
-    "version": "1.0",
-    "permissions": ["activeTab", "scripting"],
-    "background": {
-      "service_worker": "background.js"
-    },
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js": ["content.js"]
-      }
-    ]
-  }
-  
+  "manifest_version": 3,
+  "name": "Haven",
+  "version": "0.1.0",
+  "description": "Protects children from harmful content while browsing.",
+  "permissions": ["activeTab"],
+  "host_permissions": ["http://localhost:8000/*", "<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

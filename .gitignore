@@ -1,3 +1,8 @@
 EDA-ENV
 Datasets
 model-env
+model/venv/
+model/Haven_env/
+.env
+__pycache__/
+*.pyc

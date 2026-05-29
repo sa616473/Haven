@@ -1,61 +1,81 @@
-# Cyber Bullying Detection
+# Haven MVP
 
-This project implements a machine learning-based approach to detect and classify instances of cyberbullying from social media text data. It leverages natural language processing (NLP) techniques and various classification models to identify harmful or abusive language, providing a step towards creating safer online spaces.
+Real-time harmful content redaction for children browsing the web.
 
-## Prerequisites
-- Python 3.10.15 (Recommended)
-- pip3
-- Chrome Browser
-- Git (optional, but recommended)
+## How it works
 
-## Setup Instructions
+1. Chrome extension scans page text as the child browses
+2. Text chunks are sent to a local FastAPI backend as one page document
+3. Backend makes **one** Claude Haiku call per page to classify harmful spans
+4. Extension blurs entire posts/blocks flagged as harmful
+5. Child can click a blurred block to reveal it
 
-### Step 1: Environment Setup
+## Categories detected
+
+- **Body image** — diet culture, weight/appearance shaming, unrealistic body standards
+- **Self-harm** — references to self-harm, suicide, suicidal ideation
+- **Violence** — graphic descriptions of violence or gore
+- **Predatory** — grooming language, secrecy requests, inappropriate adult-child dynamics
+- **Anxiety** — doom-inducing content inappropriate for children
+
+---
+
+## Setup
+
+### 1. Backend
+
 ```bash
-# Navigate to the model directory
 cd model
+python3 -m venv venv
+source venv/bin/activate      # Windows: venv\Scripts\activate
+pip install -r requirements.txt
 
-# Create a virtual environment
-python3.10 -m venv model-env
+cp .env.example .env
+# Edit .env and add your ANTHROPIC_API_KEY, then:
+export $(grep -v '^#' .env | xargs)   # or: set -a && source .env && set +a
 
-# Activate the virtual environment
-source model-env/bin/activate  # On Unix/macOS
-# Or
-model-env\Scripts\activate     # On Windows
-
-# Install required dependencies
-pip3 install -r requirements.txt
+uvicorn model:app --reload --port 8000
 ```
 
-### Step 2: Chrome Extension Installation
-1. Open Google Chrome
-2. Navigate to `chrome://extensions/`
-3. Enable "Developer mode" (toggle switch in the top right corner)
-4. Click "Load unpacked"
-5. Select the `chrome_ext` folder from your project directory
+Verify it's running: http://localhost:8000/health
 
-### Step 3: Running the Model
-```bash
-# Ensure you're in the model directory and virtual environment is activated
-python3.10 model.py
+### 2. Chrome Extension
+
+1. Open Chrome → `chrome://extensions/`
+2. Enable **Developer mode** (top right)
+3. Click **Load unpacked**
+4. Select the **`chrome_ext/`** folder (not the repo root)
+
+### 3. Test it
+
+1. Keep the backend running on port 8000
+2. Open `test.html` in Chrome (`file://` or via a local static server)
+3. Harmful blocks should blur entirely; click a blurred block to reveal it
+
+Debug: extension **Service worker** console (`chrome://extensions` → Inspect) and the page console.
+
+---
+
+## Project structure
+
+```
+Haven/
+├── model/
+│   ├── model.py           # FastAPI app + Claude classifier
+│   ├── requirements.txt
+│   └── .env.example
+├── chrome_ext/
+│   ├── manifest.json
+│   ├── background.js      # Calls /classify/page (one LLM call per page)
+│   └── content.js         # DOM scanner + whole-block blur
+└── test.html
 ```
 
-### Step 4: Testing
-Open `test.html` in your Chrome browser to verify the extension's functionality.
+---
 
-## Project Components
-- `model/`: Contains the machine learning model and preprocessing scripts
-- `chrome_ext/`: Chrome browser extension files
-- `test.html`: Sample HTML page for testing cyberbullying detection
+## Next steps
 
-## Troubleshooting
-- Ensure Python version compatibility (3.10 or lower)
-- Verify all dependencies are installed correctly
-- Check Chrome extension permissions if detection doesn't work
-
-## Contributing
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+- Deploy backend to Railway / Render (remove localhost dependency)
+- Add per-child settings via extension popup
+- Add parent notification when content is redacted
+- Fine-tune confidence thresholds per category

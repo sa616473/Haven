@@ -1,75 +1,412 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyberbullying Detection Test</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    <!-- <style>
-        body {
-            background-color: #f4f4f4;
-        }
-        .bullying-text {
-            color: #d9534f;
-            background-color: #ffdddd;
-            border-left: 4px solid #d9534f;
-        }
-        .positive-text {
-            color: #5cb85c;
-            background-color: #dff0d8;
-            border-left: 4px solid #5cb85c;
-        }
-    </style> -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haven — Extension Test Page</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #1a1a2e;
+      --paper: #f5f2eb;
+      --paper2: #ede9df;
+      --rule: #d6d0c4;
+      --accent: #3d2b8e;
+      --accent-soft: #ede8ff;
+      --mono: 'DM Mono', monospace;
+      --serif: 'Instrument Serif', serif;
+
+      --cat-body:     #7c3aed;
+      --cat-body-bg:  #f3eeff;
+      --cat-harm:     #dc2626;
+      --cat-harm-bg:  #fff1f1;
+      --cat-violence: #ea580c;
+      --cat-vio-bg:   #fff4ee;
+      --cat-pred:     #db2777;
+      --cat-pred-bg:  #fff0f7;
+      --cat-anxiety:  #ca8a04;
+      --cat-anx-bg:   #fffbeb;
+      --cat-safe:     #16a34a;
+      --cat-safe-bg:  #f0fdf4;
+    }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--serif);
+      font-size: 18px;
+      line-height: 1.75;
+      min-height: 100vh;
+    }
+
+    /* Ruled paper texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        transparent,
+        transparent 27px,
+        var(--rule) 27px,
+        var(--rule) 28px
+      );
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 64px 48px 96px;
+    }
+
+    /* Red margin line */
+    .page::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 96px;
+      width: 1px;
+      background: #e8a0a0;
+      opacity: 0.6;
+    }
+
+    header {
+      margin-bottom: 56px;
+      padding-left: 16px;
+    }
+
+    .label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 42px;
+      font-weight: 400;
+      line-height: 1.15;
+      font-style: italic;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #888;
+      line-height: 1.6;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 32px 0 48px;
+      padding: 16px 20px;
+      background: var(--paper2);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Section */
+    .section {
+      margin-bottom: 52px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .section-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .section-title {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #666;
+    }
+
+    /* Content blocks */
+    .block {
+      padding: 16px 20px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      border-left: 3px solid transparent;
+      font-size: 17px;
+      line-height: 1.7;
+      position: relative;
+    }
+
+    .block-note {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+      opacity: 0.6;
+    }
+
+    /* Category styles */
+    .harmful {
+      background: white;
+      border-left-color: var(--rule);
+    }
+
+    .safe {
+      background: var(--cat-safe-bg);
+      border-left-color: var(--cat-safe);
+    }
+    .safe .block-note { color: var(--cat-safe); }
+
+    /* Divider */
+    .divider {
+      text-align: center;
+      margin: 48px 0;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: #bbb;
+      letter-spacing: 0.2em;
+    }
+    .divider::before, .divider::after {
+      content: '— ';
+    }
+
+    footer {
+      margin-top: 64px;
+      padding-top: 24px;
+      border-top: 1px solid var(--rule);
+      font-family: var(--mono);
+      font-size: 11px;
+      color: #aaa;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ccc;
+      margin-right: 6px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+  </style>
 </head>
-<body class="container mx-auto px-4 py-8 max-w-2xl">
-    <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Cyberbullying Detection Test</h1>
-    
-    <div class="space-y-4">
-        <div class="p-4 rounded bullying-text">
-            <p>You're such a worthless failure; everyone can see how pathetic you are.</p>
-        </div>
-        
-        <div class="p-4 rounded positive-text">
-            <p>I believe in you and your potential to succeed!</p>
-        </div>
-        
-        <div class="p-4 rounded bullying-text">
-            <span>Why don't you just give up? You'll never amount to anything.</span>
-        </div>
-        
-        <div class="p-4 rounded positive-text">
-            <span>Your hard work is truly inspiring!</span>
-        </div>
-        
-        <div class="p-4 rounded bullying-text">
-            <a href="#" class="underline">You're a complete embarrassment to everyone around you.</a>
-        </div>
-        
-        <div class="p-4 rounded positive-text">
-            <a href="#" class="underline">Here's a resource that might help you grow.</a>
-        </div>
-        
-        <ul class="space-y-2">
-            <li class="p-4 rounded bullying-text">
-                You're so annoying that people pretend not to see you.
-            </li>
-            <li class="p-4 rounded positive-text">
-                Teamwork makes the dream work - let's collaborate!
-            </li>
-        </ul>
-        
-        <div class="space-y-4">
-            <div class="p-4 rounded bullying-text">
-                <p>Nobody respects you, and you know it. Just stop trying.</p>
-            </div>
-            <div class="p-4 rounded positive-text">
-                <p>You are valued and an important part of this community.</p>
-            </div>
-        </div>
+<body>
+<div class="page">
+
+  <header>
+    <div class="label">Haven · Extension Test Page</div>
+    <h1>Content redaction<br>test suite</h1>
+    <p class="subtitle">
+      Load this page with the Haven extension active.<br>
+      Harmful spans below should be blurred. Safe content should remain visible.
+    </p>
+
+    <div class="legend">
+      <div class="legend-item"><span class="dot" style="background:var(--cat-body)"></span>Body image</div>
+      <div class="legend-item"><span class="dot" style="background:var(--cat-harm)"></span>Self-harm</div>
+      <div class="legend-item"><span class="dot" style="background:var(--cat-violence)"></span>Violence</div>
+      <div class="legend-item"><span class="dot" style="background:var(--cat-pred)"></span>Predatory</div>
+      <div class="legend-item"><span class="dot" style="background:var(--cat-anxiety)"></span>Anxiety-inducing</div>
+      <div class="legend-item"><span class="dot" style="background:var(--cat-safe)"></span>Safe — should NOT be redacted</div>
     </div>
-    
-    <footer class="mt-8 text-center text-gray-600">
-        <p>Remember: Kindness matters. Be supportive, not destructive.</p>
-    </footer>
+  </header>
+
+  <!-- BODY IMAGE -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-tag" style="background:var(--cat-body-bg);color:var(--cat-body)">Body image</span>
+      <span class="section-title">Unrealistic standards, diet culture, appearance shaming</span>
+    </div>
+
+    <div class="block harmful">
+      <div class="block-note">should redact</div>
+      <p>She finally reached her goal weight by eating under 400 calories a day. The thinner you are, the more self-control you have — everyone knows that.</p>
+    </div>
+
+    <div class="block harmful">
+      <div class="block-note">should redact</div>
+      <p>People who can't lose weight are just lazy. Nobody wants to date someone who looks like that. Getting skinny is the only way anyone will take you seriously.</p>
+    </div>
+
+    <div class="block safe">
+      <div class="block-note">safe — keep visible</div>
+      <p>Healthy habits look different for everyone. Regular movement, balanced meals, and adequate sleep are the foundations of long-term wellbeing.</p>
+    </div>
+  </div>
+
+  <div class="divider">§</div>
+
+  <!-- SELF-HARM -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-tag" style="background:var(--cat-harm-bg);color:var(--cat-harm)">Self-harm</span>
+      <span class="section-title">Suicide, self-harm references, ideation</span>
+    </div>
+
+    <div class="block harmful">
+      <div class="block-note">should redact</div>
+      <p>When the pain gets too loud, cutting helps me feel something real. It's the only thing that makes the numbness go away for a while.</p>
+    </div>
+
+    <div class="block harmful">
+      <div class="block-note">should redact</div>
+      <p>I've been researching methods for weeks. Nobody would notice if I disappeared anyway. It would be easier for everyone.</p>
+    </div>
+
+    <div class="block safe">
+      <div class="block-note">safe — keep visible</div>
+      <p>If you're feeling overwhelmed, talking to a trusted adult or calling a crisis line can help. You don't have to go through hard moments alone.</p>
+    </div>
+  </div>
+
+  <div class="divider">§</div>
+
+  <!-- VIOLENCE -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-tag" style="background:var(--cat-vio-bg);color:var(--cat-violence)">Violence</span>
+      <span class="section-title">Graphic descriptions of harm or gore</span>
+    </div>
+
+    <div class="block harmful">
+      <div class="block-note">should redact</div>
+      <p>The attacker stabbed him repeatedly, leaving the body barely recognisable. The graphic crime scene photos were later leaked online and circulated widely.</p>
+    </div>
+
+    <div class="block harmful">
+      <div class="block-note">should redact</div>
+      <p>He described in detail how he wanted to hurt his classmates, listing the specific weapons he'd use and the order he'd go through the school hallways.</p>
+    </div>
+
+    <div class="block safe">
+      <div class="block-note">safe — keep visible</div>
+      <p>The documentary examines how communities recover after tragedy, focusing on support networks, memorial efforts, and long-term healing.</p>
+    </div>
+  </div>
+
+  <div class="divider">§</div>
+
+  <!-- PREDATORY -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-tag" style="background:var(--cat-pred-bg);color:var(--cat-pred)">Predatory</span>
+      <span class="section-title">Grooming language, secrecy requests, isolation tactics</span>
+    </div>
+
+    <div class="block harmful">
+      <div class="block-note">should redact</div>
+      <p>Don't tell your parents we talk. They wouldn't understand our special friendship — they'd just try to ruin it because they're jealous of how close we've gotten.</p>
+    </div>
+
+    <div class="block harmful">
+      <div class="block-note">should redact</div>
+      <p>You're so mature for your age — way more than other kids I know. I feel like you're the only one who really gets me. This is just between us, okay?</p>
+    </div>
+
+    <div class="block safe">
+      <div class="block-note">safe — keep visible</div>
+      <p>A trusted adult is someone who makes you feel safe, respected, and never asks you to keep secrets from your family.</p>
+    </div>
+  </div>
+
+  <div class="divider">§</div>
+
+  <!-- ANXIETY -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-tag" style="background:var(--cat-anx-bg);color:var(--cat-anxiety)">Anxiety-inducing</span>
+      <span class="section-title">Doom content inappropriate for child readers</span>
+    </div>
+
+    <div class="block harmful">
+      <div class="block-note">should redact</div>
+      <p>Scientists confirm the planet will be uninhabitable within 15 years. There is no solution. Your generation will be the last to experience a functioning civilization.</p>
+    </div>
+
+    <div class="block harmful">
+      <div class="block-note">should redact</div>
+      <p>Nuclear war is inevitable and imminent. When it happens, most people will die slowly from radiation sickness. There's nowhere to hide and nothing anyone can do.</p>
+    </div>
+
+    <div class="block safe">
+      <div class="block-note">safe — keep visible</div>
+      <p>Young people around the world are finding creative ways to address climate challenges — from school garden projects to local clean-up initiatives in their communities.</p>
+    </div>
+  </div>
+
+  <div class="divider">§</div>
+
+  <!-- MIXED PARAGRAPH -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-tag" style="background:#f0f0f0;color:#555">Mixed</span>
+      <span class="section-title">Harmful content embedded in otherwise normal text</span>
+    </div>
+
+    <div class="block harmful">
+      <div class="block-note">should redact only the harmful span</div>
+      <p>Summer is a great time to spend with friends and try new activities. Getting skinny before school starts is the only way people will actually want to hang out with you, but otherwise the season has a lot to offer. Local parks often host free events for teens.</p>
+    </div>
+
+    <div class="block harmful">
+      <div class="block-note">should redact only the harmful span</div>
+      <p>The article covered several topics in wellness. One section claimed that people who can't control their weight have no willpower and deserve to be alone. The rest of the piece discussed sleep hygiene and stress management techniques.</p>
+    </div>
+  </div>
+
+  <footer>
+    <span><span class="status-dot"></span>Haven extension active when spans are blurred</span>
+    <span>v0.1.0 · test suite</span>
+  </footer>
+
+</div>
 </body>
 </html>
