@@ -5,6 +5,37 @@ Real-time harmful content redaction for children browsing the web.
 **Live API:** https://haven-api-is35.onrender.com/health  
 *(Render free tier may cold-start ~30s after idle.)*
 
+## Architecture
+
+```
+┌─────────┐     browses      ┌──────────────┐
+│  User   │ ───────────────► │   Website    │
+└─────────┘                  │  (DOM text)  │
+       ▲                     └──────┬───────┘
+       │                            │
+       │ sees blurred posts         │ content script
+       │                            ▼
+       │                     ┌──────────────┐
+       └─────────────────────│ Chrome Ext   │
+                             │  content.js  │
+                             │      │       │
+                             │      ▼       │
+                             │ background.js│
+                             └──────┬───────┘
+                                    │ HTTPS
+                                    ▼
+                             ┌──────────────┐
+                             │  Haven API   │
+                             │   (Render)   │
+                             └──────┬───────┘
+                                    │
+                                    ▼
+                             ┌──────────────┐
+                             │ Claude Haiku │
+                             │  (Anthropic) │
+                             └──────────────┘
+```
+
 ## How it works
 
 1. Chrome extension scans page text as the child browses
